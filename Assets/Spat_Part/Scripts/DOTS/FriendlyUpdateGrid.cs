@@ -30,8 +30,7 @@ public class FriendlyUpdateGrid : ComponentSystemBase {
     /// </summary>
     /// <param name="jobHandle"></param>
     /// <returns></returns>
-
-    protected override JobHandle OnUpdate (JobHandle jobHandle) {
+    public override void Update () {
         var friendlyType = GetComponentTypeHandle<Friendly> (); //Should change to friendly
         var targetType = GetComponentTypeHandle<TargetPosition> ();
 
@@ -40,10 +39,10 @@ public class FriendlyUpdateGrid : ComponentSystemBase {
             friendlyTarget = targetType,
 
             enemyEntities = GridJobStatics.enemyEntities,
-            enemies = this.GetComponentDataFromEntity<Enemy> (),
-            enMat = this.GetComponentDataFromEntity<EnemyMaterialColor> (),
+            enemies = this.GetComponentLookup<Enemy> (),
+            enMat = this.GetComponentLookup<EnemyMaterialColor> (),
         };
-        return job.ScheduleParallel (m_FriendlyEQ, jobHandle);
+        // return job.ScheduleParallel (m_FriendlyEQ, jobHandle);
     }
 
     /// <summary>
@@ -58,17 +57,17 @@ public class FriendlyUpdateGrid : ComponentSystemBase {
         public ComponentTypeHandle<TargetPosition> friendlyTarget;
 
         [NativeDisableParallelForRestrictionAttribute]
-        public ComponentDataFromEntity<EnemyMaterialColor> enMat;
+        public ComponentLookup<EnemyMaterialColor> enMat;
 
         [ReadOnly]
-        public ComponentDataFromEntity<Enemy> enemies;
+        public ComponentLookup<Enemy> enemies;
 
-        public void Execute (ArchetypeChunk chunk, int chunkIndex, int firstEntityIndex) {
+        public void Execute(in ArchetypeChunk chunk, int unfilteredChunkIndex, bool useEnabledMask, in v128 chunkEnabledMask) {
             // enemyEntities = GridJobStatics.enemyEntities;
             //Get chunks to process //Fails BURST
-            var chunkFriend = chunk.GetNativeArray (friendlySoldier);
+            var chunkFriend = chunk.GetNativeArray(ref friendlySoldier);
 
-            var chunkTargetPos = chunk.GetNativeArray (friendlyTarget);
+            var chunkTargetPos = chunk.GetNativeArray(ref friendlyTarget);
 
             //_friendNum used to be firstEntityIndex. Only worked for first chunk. Purpose of var?
             /// Loop through all friendlies

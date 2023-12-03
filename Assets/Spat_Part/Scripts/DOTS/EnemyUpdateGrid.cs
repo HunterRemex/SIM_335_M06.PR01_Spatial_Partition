@@ -24,7 +24,7 @@ public partial class EnemyUpdateGrid : SystemBase
 			{
 				ComponentType.ReadWrite<Enemy>(),
 				ComponentType.ReadWrite<TargetPosition>(),
-				ComponentType.ReadOnly<Translation>()
+				ComponentType.ReadOnly<LocalTransform>()
 			}
 		};
 
@@ -36,16 +36,16 @@ public partial class EnemyUpdateGrid : SystemBase
 	/// </summary>
 	/// <param name="jobHandle"></param>
 	/// <returns></returns> 
-	protected override JobHandle OnUpdate(JobHandle jobHandle)
+	protected override void OnUpdate()
 	{
 		// enemyEntities.Dispose();
 
-		var enemyChunks = m_EnemyEQ.CreateArchetypeChunkArray(Allocator.Temp);
+		var enemyChunks = m_EnemyEQ.ToArchetypeChunkArray(Allocator.Temp);
 
 		var entType = GetEntityTypeHandle();
 		var enemyType = GetComponentTypeHandle<Enemy>();
 		var targetType = GetComponentTypeHandle<TargetPosition>();
-		var txType = GetComponentTypeHandle<Translation>();
+		var txType = GetComponentTypeHandle<LocalTransform>();
 
 		//If error here: Disable Jobs -> Mem Leak Detection
 		// enemyEntities = m_EnemyEQ.ToEntityArray (Allocator.Persistent);
@@ -55,12 +55,12 @@ public partial class EnemyUpdateGrid : SystemBase
 			entity = entType,
 			enemyTarget = targetType,
 			tx = txType,
-			enemies = this.GetComponentDataFromEntity<Enemy>(),
-			jobHandle = jobHandle,
+			enemies = this.GetComponentLookup<Enemy>(),
+			// jobHandle = jobHandle,
 			enemyEntities = GridJobStatics.enemyEntities,
 		};
 
-		return job.ScheduleParallel(m_EnemyEQ, jobHandle);
+		// return job.ScheduleParallel(m_EnemyEQ, null);
 	}
 
 	// <summary>
@@ -73,19 +73,19 @@ public partial class EnemyUpdateGrid : SystemBase
 		[ReadOnly] public NativeArray<Entity> enemyEntities;
 
 		public ComponentTypeHandle<TargetPosition> enemyTarget;
-		public ComponentTypeHandle<Translation> tx;
+		public ComponentTypeHandle<LocalTransform> tx;
 
 		[NativeDisableParallelForRestrictionAttribute]
-		public ComponentDataFromEntity<Enemy> enemies;
+		public ComponentLookup<Enemy> enemies;
 
 		public JobHandle jobHandle;
 
-		public void Execute(ArchetypeChunk chunk, int chunkIndex, int firstEntityIndex)
+		public void Execute(in ArchetypeChunk chunk, int unfilteredChunkIndex, bool useEnabledMask, in v128 chunkEnabledMask)
 		{
 			//Get chunks to process
 			var chunkEntity = chunk.GetNativeArray(entity);
-			var chunkTargetPos = chunk.GetNativeArray(enemyTarget);
-			var chunkTx = chunk.GetNativeArray(tx);
+			var chunkTargetPos = chunk.GetNativeArray(ref enemyTarget);
+			var chunkTx = chunk.GetNativeArray(ref tx);
 
 			// Loop through all enemies
 			for (int _enemyNum = 0; _enemyNum < chunkEntity.Length; _enemyNum++)
@@ -179,14 +179,12 @@ public partial class EnemyUpdateGrid : SystemBase
 				if (Grid.instance.data.cells[oldCellX, oldCellY, oldCellZ].entityId == _me.soldierData.entityId &&
 				    _me.soldierData.nextSoldier != -1)
 				{
-					Grid.instance.data.cells[oldCellX, oldCellY, oldCellZ] =
-						enemies[new Entity {Index = _me.soldierData.nextSoldier, Version = 1}].soldierData;
+					Grid.instance.data.cells[oldCellX, oldCellY, oldCellZ] = enemies[new Entity {Index = _me.soldierData.nextSoldier, Version = 1}].soldierData;
 				}
 
 
 				//Add ourselves back to the grid
-				int soldierToInform =
-					Grid.instance.Add(enemies[chunkEntity[_enemyNum]].soldierData, chunkTx[_enemyNum].Value);
+				int soldierToInform = Grid.instance.Add(enemies[chunkEntity[_enemyNum]].soldierData, chunkTx[_enemyNum].Position);
 
 				if (soldierToInform != -1)
 				{

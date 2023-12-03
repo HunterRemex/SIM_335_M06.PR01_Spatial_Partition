@@ -18,12 +18,12 @@ public partial class GridSys : SystemBase
 		grid = Grid.instance; //Singleton
 		entManager = World.DefaultGameObjectInjectionWorld.EntityManager;
 
-		_endSimEcbSystem = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
+		_endSimEcbSystem = World.GetOrCreateSystemManaged<EndSimulationEntityCommandBufferSystem>();
 	}
 
 	protected override void OnStartRunning()
 	{
-		var enemies = GetComponentDataFromEntity<Enemy>();
+		var enemies = GetComponentLookup<Enemy>();
 
 		// <summary>
 		// Add Enemies onto the grid and (sufferingly) create a linked-ish list
@@ -34,7 +34,7 @@ public partial class GridSys : SystemBase
 		// <param name="enemy"></param> Filter param
 		// <returns></returns>
 		Entities
-			.ForEach((Entity entity, ref Enemy en, in Translation translation) =>
+			.ForEach((Entity entity, ref Enemy en, in LocalTransform translation) =>
 			{
 				//Add soldier to the managed grid
 
@@ -50,7 +50,7 @@ public partial class GridSys : SystemBase
 				};
 
 
-				var soldierToInform = grid.Add(en.soldierData, translation.Value);
+				var soldierToInform = grid.Add(en.soldierData, translation.Position);
 
 				if (soldierToInform <= 0) return;
 				//Inform ourselves of who's ahead of us
@@ -107,7 +107,7 @@ public partial class GridSys : SystemBase
 		{
 			var enmy = entManager.Instantiate(SoldierSpawner.FirstEnemyLad);
 
-			var tx = entManager.GetComponentData<Translation>(enmy);
+			var tx = entManager.GetComponentData<LocalTransform>(enmy);
 			var tPos = new float3(50f, 50f, 50f);
 
 			entManager.AddComponentData(enmy, new Enemy
@@ -126,10 +126,9 @@ public partial class GridSys : SystemBase
 			{
 				Value = tPos //Should be SoldierSpawner.mapWidth into an lRand, don't want to bother pulling in lRand
 			});
-			entManager.SetComponentData(enmy, new Rotation
-			{
-				Value = Quaternion.LookRotation(tPos - tx.Value)
-			});
+			// entManager.SetComponentData(enmy, Quaternion.LookRotation(tPos - tx.Position));
+			tx.Rotation = Quaternion.LookRotation(tPos - tx.Position);
+			entManager.SetComponentData(enmy, tx);
 
 			// <summary>
 			// Materialization

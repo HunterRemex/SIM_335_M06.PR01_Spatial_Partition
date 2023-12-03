@@ -8,13 +8,12 @@ public partial class FriendlyMoveSystem : SystemBase
 {
     //Place Friends around the map
 
-
     protected override void OnUpdate()
     {
         // Assign values to local variables captured in your job here, so that it has
         // everything it needs to do its work when it runs later.
         // For example,
-        float deltaTime = Time.DeltaTime;
+        float deltaTime = World.Time.DeltaTime;
 
         // This declares a new kind of job, which is a unit of work to do.
         // The job is declared as an Entities.ForEach with the target components as parameters,
@@ -24,7 +23,7 @@ public partial class FriendlyMoveSystem : SystemBase
         
         
         Entities
-            .ForEach((ref Friendly friend, ref Translation tx, ref Rotation rot, in TargetPosition tPos) =>
+            .ForEach((ref Friendly friend, ref LocalTransform tx, in TargetPosition tPos) =>
             {
                 // Implement the work to perform for each entity here.
                 // You should only access data that is local or that is a
@@ -37,9 +36,9 @@ public partial class FriendlyMoveSystem : SystemBase
 
                 // Debug.Log("Update friend");
                 ///if close to target, don't run
-                rot.Value = Quaternion.LookRotation(tPos.Value - tx.Value);
+                tx.Rotation = Quaternion.LookRotation(tPos.Value - tx.Position);
 
-                tx.Value += (float3)((Quaternion)rot.Value * Vector3.forward) * friend.soldierData.walkSpeed * deltaTime;
+                tx.Position += (float3)((Quaternion)tx.Rotation * Vector3.forward) * friend.soldierData.walkSpeed * deltaTime;
                 
                 
                 friend.soldierData = new Soldier
@@ -48,7 +47,7 @@ public partial class FriendlyMoveSystem : SystemBase
                         entityId        = friend.soldierData.entityId,
                         previousSoldier = friend.soldierData.previousSoldier,
                         nextSoldier     = friend.soldierData.nextSoldier,
-                        position        = tx.Value,
+                        position        = tx.Position,
                         walkSpeed       = friend.soldierData.walkSpeed
                 };
                 

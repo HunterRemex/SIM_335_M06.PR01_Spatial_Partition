@@ -38,7 +38,7 @@ public partial class GridJobStatics : SystemBase
 [UpdateInGroup(typeof(InitializationSystemGroup))]
 internal partial class RandomSystem : ComponentSystemBase
 {
-	public NativeArray<Unity.Mathematics.Random> Rands;
+	internal NativeArray<Unity.Mathematics.Random> Rands;
 
 	protected override void OnCreate()
 	{
@@ -55,7 +55,8 @@ internal partial class RandomSystem : ComponentSystemBase
 
 	protected override void OnDestroy() => Rands.Dispose();
 
-	protected override void OnUpdate()
+	public override void Update()
 	{
+		throw new System.NotImplementedException();
 	}
 }

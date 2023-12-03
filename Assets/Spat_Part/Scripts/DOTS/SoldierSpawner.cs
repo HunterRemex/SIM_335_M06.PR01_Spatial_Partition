@@ -97,12 +97,10 @@ public partial class SoldierSpawner : SystemBase
 
 		//Place Friends around the map
 		Entities
-			.ForEach(
-				(Entity soldier, ref Translation tx,
-					ref Friendly fren) => //Filter to entities with a Soldier component (Friends & Enemies)
+			.ForEach((Entity soldier, ref LocalTransform tx, ref Friendly fren) => //Filter to entities with a Soldier component (Friends & Enemies)
 				{
 					//Place them somewhere
-					tx.Value = new float3(lRand.NextFloat(MapWidth), lRand.NextFloat(MapWidth),
+					tx.Position = new float3(lRand.NextFloat(MapWidth), lRand.NextFloat(MapWidth),
 						lRand.NextFloat(MapWidth)); 
 				}).WithBurst().ScheduleParallel(); //.WithStructuralChanges().Run();
 	}
