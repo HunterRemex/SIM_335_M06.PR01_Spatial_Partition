@@ -1,18 +1,12 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using Runtime;
-using Unity.Burst;
-using Unity.Collections;
 using Unity.Entities;
-using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
 [UpdateAfter(typeof(SoldierSpawner))]
 [UpdateAfter(typeof(EnemyUpdateGrid))]
-public class GridSys : SystemBase
+public partial class GridSys : SystemBase
 {
 	public Grid grid;
 	private static EntityManager entManager;

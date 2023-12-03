@@ -1,11 +1,7 @@
-using System;
-using Runtime;
-using Unity.Burst;
+using Unity.Burst.Intrinsics;
 using Unity.Collections;
 using Unity.Entities;
-using Unity.Jobs;
 using Unity.Mathematics;
-using Unity.Transforms;
 using UnityEngine;
 
 /// <summary>
@@ -13,7 +9,7 @@ using UnityEngine;
 /// </summary>
 [UpdateAfter (typeof (GridJobStatics))]
 [UpdateBefore (typeof (SoldierSpawner))]
-public class FriendlyUpdateGrid : JobComponentSystem {
+public class FriendlyUpdateGrid : ComponentSystemBase {
 
     /// <summary>
     /// Prep the query

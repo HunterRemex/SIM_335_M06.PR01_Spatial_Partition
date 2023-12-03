@@ -1,18 +1,10 @@
 using Unity.Entities;
-using Unity.Transforms;
-using Unity.Rendering;
 using Unity.Mathematics;
 using Unity.Collections;
-using Unity.Collections.LowLevel.Unsafe;
-using System.Numerics;
-using UnityEngine;
-using Unity.Jobs;
-using Unity.Burst;
-using Runtime;
-using System.Linq;
+using Unity.Transforms;
 
 [UpdateBefore(typeof(GridSys))]
-public class SoldierSpawner : SystemBase
+public partial class SoldierSpawner : SystemBase
 {
 	//Grid Data
 	public static readonly int MapWidth = 100;

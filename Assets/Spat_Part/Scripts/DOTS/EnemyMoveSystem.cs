@@ -1,21 +1,15 @@
-using Runtime;
-using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
-using Unity.Jobs;
-using Unity.Jobs.LowLevel.Unsafe;
 using Unity.Mathematics;
+using UnityEngine;
 using Unity.Transforms;
-using UnityEngine; //Logging
 
-[AlwaysUpdateSystem] //Run on tick
-// [UpdateInGroup(typeof(ComponentSystemGroup))]
-[UpdateBefore (typeof (EnemyUpdateGrid))]
+[UpdateBefore(typeof(EnemyUpdateGrid))]
+[RequireMatchingQueriesForUpdate]
+public partial class EnemyMoveSystem : SystemBase {
 
-public class EnemyMoveSystem : SystemBase {
-
-    [NativeDisableParallelForRestrictionAttribute]
-    ComponentDataFromEntity<Enemy> enemyComps;
+    [NativeDisableParallelForRestriction]
+    ComponentLookup<Enemy> enemyComps;
     protected override void OnStartRunning () {
 
         enemyComps = GetComponentDataFromEntity<Enemy> ();

@@ -1,16 +1,11 @@
-using Unity.Burst;
-using Unity.Collections;
 using Unity.Entities;
-using Unity.Jobs;
-using Unity.Mathematics;
-using Unity.Transforms;
 using UnityEngine;
 using TMPro;
 
 // [AlwaysUpdateSystem]
 [UpdateAfter(typeof(GridSys))]
 [UpdateAfter(typeof(GridJobStatics))]
-public class FramerateMatcherSystem : SystemBase
+public partial class FramerateMatcherSystem : SystemBase
 {
 	public float targetFrameRate = 80f;
 	private float targetFrameTime;

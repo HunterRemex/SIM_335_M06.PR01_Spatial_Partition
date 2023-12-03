@@ -1,17 +1,11 @@
-using System;
-using Unity.Burst;
-using Unity.Collections;
 using Unity.Entities;
-using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Transforms;
-using UnityEngine; //Rots
+using UnityEngine;
 
 
-public class FriendlyMoveSystem : SystemBase
+public partial class FriendlyMoveSystem : SystemBase
 {
-
-
     //Place Friends around the map
 
 

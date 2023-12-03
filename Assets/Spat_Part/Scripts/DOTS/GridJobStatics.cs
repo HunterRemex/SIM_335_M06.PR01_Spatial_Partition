@@ -1,16 +1,9 @@
-using System;
-using System.Linq;
-using Runtime;
-using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
-using Unity.Jobs;
 using Unity.Jobs.LowLevel.Unsafe;
-using Unity.Mathematics;
-using Unity.Transforms;
-using UnityEngine; //Log
 
-public class GridJobStatics : SystemBase
+
+public partial class GridJobStatics : SystemBase
 {
 	public static NativeArray<Entity> enemyEntities;
 
@@ -43,7 +36,7 @@ public class GridJobStatics : SystemBase
 /// From: https://reeseschultz.com/random-number-generation-with-unity-dots/
 /// </summary>
 [UpdateInGroup(typeof(InitializationSystemGroup))]
-class RandomSystem : ComponentSystem
+internal partial class RandomSystem : ComponentSystemBase
 {
 	public NativeArray<Unity.Mathematics.Random> Rands;
 

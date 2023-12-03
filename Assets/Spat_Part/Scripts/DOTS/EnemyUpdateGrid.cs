@@ -1,18 +1,13 @@
-using System;
-using System.Linq;
-using Runtime;
-using Unity.Burst;
+using Unity.Burst.Intrinsics;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Transforms;
-using UnityEngine; //Log
 
-[AlwaysUpdateSystem]
 [UpdateAfter(typeof(EnemyMoveSystem))]
 [UpdateBefore(typeof(FriendlyMoveSystem))]
-public class EnemyUpdateGrid : JobComponentSystem
+public partial class EnemyUpdateGrid : SystemBase
 {
 	public static NativeArray<Entity> enemyEntities;
 

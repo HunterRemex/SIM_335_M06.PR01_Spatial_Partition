@@ -1,14 +1,9 @@
-using Unity.Burst;
-using Unity.Collections;
 using Unity.Entities;
-using Unity.Jobs;
 using Unity.Mathematics;
-using Unity.Transforms;
-using UnityEngine;
 
 
 [UpdateBefore(typeof(FriendlyUpdateGrid))]
-public class EnemyClosestMatSystem : SystemBase
+public partial class EnemyClosestMatSystem : SystemBase
 {
     protected override void OnUpdate()
     {
