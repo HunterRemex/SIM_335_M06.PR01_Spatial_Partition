@@ -1,17 +1,14 @@
-using System.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
-using Unity.Transforms;
-using UnityEngine;
 
-public struct Soldier : IComponentData {
-    // public int id;
-
+/// <summary>
+/// Info about this Enemy/Friendly instance
+/// </summary>
+public struct Soldier : IComponentData
+{
     public int entityId;
-    public float walkSpeed; //Should be prot'd
     public int previousSoldier;
     public int nextSoldier;
-
+    public float walkSpeed; //Should be prot'd
     public float3 position;
-
 }
